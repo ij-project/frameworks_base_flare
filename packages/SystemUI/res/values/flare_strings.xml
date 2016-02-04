@@ -65,4 +65,10 @@
     <!-- Island notification -->
     <string name="now_playing_on">Now Playing on %1$s</string>
     <string name="by_artist">%1$s by %2$s</string>
+
+    <!-- Custom QS tiles -->
+    <!-- Caffeine QS tile -->
+    <string name="quick_settings_caffeine_label">Caffeine</string>
+    <string name="accessibility_quick_settings_caffeine_off">Caffeine off.</string>
+    <string name="accessibility_quick_settings_caffeine_on">Caffeine on.</string>
 </resources>
