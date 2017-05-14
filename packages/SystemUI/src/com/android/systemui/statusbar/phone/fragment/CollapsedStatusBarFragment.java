@@ -161,6 +161,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private final DemoModeController mDemoModeController;
     private ClockController mClockController;
     private boolean mIsClockBlacklisted;
+    private View mLeftLogo;
 
     private List<String> mBlockedIcons = new ArrayList<>();
     private Map<Startable, Startable.State> mStartableStates = new ArrayMap<>();
@@ -381,6 +382,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         initOperatorName();
         initNotificationIconArea();
         mSystemEventAnimator = getSystemEventAnimator();
+        mLeftLogo = mStatusBar.findViewById(R.id.statusbar_logo);
         mCarrierConfigTracker.addCallback(mCarrierConfigCallback);
         mCarrierConfigTracker.addDefaultDataSubscriptionChangedListener(mDefaultDataListener);
 
@@ -857,11 +859,13 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     public void hideNotificationIconArea(boolean animate) {
         StatusBarSimpleFragment.assertInLegacyMode();
+        animateHide(mLeftLogo, animate);
         animateHide(mNotificationIconAreaInner, animate);
     }
 
     public void showNotificationIconArea(boolean animate) {
         StatusBarSimpleFragment.assertInLegacyMode();
+        animateShow(mLeftLogo, animate);
         animateShow(mNotificationIconAreaInner, animate);
     }
 
