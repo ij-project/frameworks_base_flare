@@ -50,6 +50,7 @@ import com.android.systemui.statusbar.notification.row.NotificationTestHelper;
 import com.android.systemui.statusbar.notification.row.shared.AsyncGroupHeaderViewInflation;
 import com.android.systemui.statusbar.notification.stack.NotificationRoundnessManager;
 import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayoutController;
+import com.android.systemui.statusbar.phone.ClockController;
 import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.statusbar.policy.HeadsUpManager;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
@@ -122,7 +123,7 @@ public class HeadsUpAppearanceControllerTest extends SysuiTestCase {
                 mShadeViewController,
                 mNotificationRoundnessManager,
                 mHeadsUpStatusBarView,
-                new Clock(mContext, null),
+		mock(ClockController.class),
                 mFeatureFlags,
                 mock(HeadsUpNotificationIconInteractor.class),
                 Optional.of(mOperatorNameView));
@@ -208,7 +209,7 @@ public class HeadsUpAppearanceControllerTest extends SysuiTestCase {
                 mShadeViewController,
                 mNotificationRoundnessManager,
                 mHeadsUpStatusBarView,
-                new Clock(mContext, null),
+		mock(ClockController.class),
                 mFeatureFlags, mock(HeadsUpNotificationIconInteractor.class),
                 Optional.empty());
 

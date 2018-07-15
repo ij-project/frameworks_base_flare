@@ -25,6 +25,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DisplayCutout;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -40,6 +41,8 @@ import com.android.systemui.Flags;
 import com.android.systemui.Gefingerpoken;
 import com.android.systemui.res.R;
 import com.android.systemui.statusbar.phone.userswitcher.StatusBarUserSwitcherContainer;
+import com.android.systemui.statusbar.policy.Clock;
+import com.android.systemui.statusbar.phone.ClockController;
 import com.android.systemui.statusbar.window.StatusBarWindowController;
 import com.android.systemui.user.ui.binder.StatusBarUserChipViewBinder;
 import com.android.systemui.user.ui.viewmodel.StatusBarUserChipViewModel;
@@ -51,6 +54,7 @@ public class PhoneStatusBarView extends FrameLayout {
     private static final String TAG = "PhoneStatusBarView";
     private final StatusBarWindowController mStatusBarWindowController;
 
+    private ClockController mClockController;
     private int mRotationOrientation = -1;
     @Nullable
     private View mCutoutSpace;
@@ -100,6 +104,7 @@ public class PhoneStatusBarView extends FrameLayout {
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
+        mClockController = new ClockController(getContext(), this);
         mCutoutSpace = findViewById(R.id.cutout_space_view);
 
         updateResources();
@@ -108,6 +113,7 @@ public class PhoneStatusBarView extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        mClockController.addDarkReceiver();
         if (updateDisplayParameters()) {
             updateLayoutForCutout();
             updateWindowHeight();
@@ -117,6 +123,7 @@ public class PhoneStatusBarView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        mClockController.removeDarkReceiver();
         mDisplayCutout = null;
     }
 
@@ -134,6 +141,10 @@ public class PhoneStatusBarView extends FrameLayout {
             requestLayout();
         }
         updateWindowHeight();
+    }
+
+    void onDensityOrFontScaleChanged() {
+        mClockController.onDensityOrFontScaleChanged();
     }
 
     @Override
@@ -314,12 +325,31 @@ public class PhoneStatusBarView extends FrameLayout {
             return;
         }
 
-        Insets insets  = mInsetsFetcher.fetchInsets();
+        Insets insets = mInsetsFetcher.fetchInsets();
         setPadding(
                 insets.left,
                 insets.top,
                 insets.right,
                 getPaddingBottom());
+
+        // Apply negative paddings to centered area layout so that we'll actually be on the center.
+        int winRotation = Surface.ROTATION_0; // Default rotation
+        if (getDisplay() != null) {
+            winRotation = getDisplay().getRotation();
+        } else {
+            Log.w(TAG, "getDisplay() returned null. Using default rotation.");
+        }
+
+        LayoutParams centeredAreaParams =
+                (LayoutParams) findViewById(R.id.centered_area).getLayoutParams();
+        centeredAreaParams.leftMargin =
+                winRotation == Surface.ROTATION_0 ? -insets.left : 0;
+        centeredAreaParams.rightMargin =
+                winRotation == Surface.ROTATION_0 ? -(insets.right) : 0;
+    }
+
+    public ClockController getClockController() {
+        return mClockController;
     }
 
     private void updateWindowHeight() {
