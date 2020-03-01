@@ -70,6 +70,7 @@ import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.policy.HeadsUpManager;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
+import com.android.systemui.statusbar.policy.TaskHelper;
 
 import dagger.Lazy;
 
@@ -113,6 +114,8 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
     private final QuickSettingsController mQsController;
     private final QSHost mQSHost;
     private final KeyguardInteractor mKeyguardInteractor;
+    private final TaskHelper mTaskHelper;
+
     private static final VibrationAttributes HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES =
             VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK);
 
@@ -154,7 +157,8 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
             QSHost qsHost,
             ActivityStarter activityStarter,
             KeyguardInteractor keyguardInteractor,
-            EmergencyGestureIntentFactory emergencyGestureIntentFactory) {
+            EmergencyGestureIntentFactory emergencyGestureIntentFactory,
+            TaskHelper taskHelper) {
         mCentralSurfaces = centralSurfaces;
         mQsController = quickSettingsController;
         mContext = context;
@@ -184,6 +188,8 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
         mUserTracker = userTracker;
         mQSHost = qsHost;
         mKeyguardInteractor = keyguardInteractor;
+        mTaskHelper = taskHelper;
+
         mVibrateOnOpening = resources.getBoolean(R.bool.config_vibrateOnIconAnimation);
         mCameraLaunchGestureVibrationEffect = getCameraGestureVibrationEffect(
                 mVibratorOptional, resources);
