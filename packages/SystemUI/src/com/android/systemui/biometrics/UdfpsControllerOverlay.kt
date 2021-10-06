@@ -161,7 +161,7 @@ constructor(
 
     private val coreLayoutParams =
         WindowManager.LayoutParams(
-                WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL,
+                WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY,
                 0 /* flags set in computeLayoutParams() */,
                 PixelFormat.TRANSLUCENT
             )
