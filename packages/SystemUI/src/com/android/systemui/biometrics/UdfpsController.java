@@ -40,6 +40,7 @@ import android.hardware.biometrics.BiometricFingerprintConstants;
 import android.hardware.biometrics.BiometricPrompt;
 import android.hardware.biometrics.SensorProperties;
 import android.hardware.display.AmbientDisplayConfiguration;
+import android.hardware.display.ColorDisplayManager;
 import android.hardware.display.DisplayManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.fingerprint.FingerprintSensorProperties;
@@ -75,6 +76,7 @@ import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.InstanceId;
 import com.android.internal.util.LatencyTracker;
+import com.android.internal.util.flare.udfps.UdfpsUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.systemui.Dumpable;
 import com.android.systemui.animation.ActivityTransitionAnimator;
@@ -238,6 +240,10 @@ public class UdfpsController implements DozeReceiver, Dumpable {
     private final AmbientDisplayConfiguration mAmbientDisplayConfiguration;
     private boolean mScreenOffFod;
 
+    private boolean mDisableNightMode;
+    private boolean mNightModeActive;
+    private int mAutoModeState;
+
     @VisibleForTesting
     public static final VibrationAttributes UDFPS_VIBRATION_ATTRIBUTES =
             new VibrationAttributes.Builder()
@@ -286,6 +292,9 @@ public class UdfpsController implements DozeReceiver, Dumpable {
         public void showUdfpsOverlay(long requestId, int sensorId, int reason,
                 @NonNull IUdfpsOverlayControllerCallback callback) {
             mUdfpsOverlayInteractor.setRequestId(requestId);
+            if (mDisableNightMode) {
+                disableNightMode();
+            }
             mFgExecutor.execute(() -> UdfpsController.this.showUdfpsOverlay(
                     new UdfpsControllerOverlay(
                         mContext,
@@ -328,6 +337,9 @@ public class UdfpsController implements DozeReceiver, Dumpable {
 
         @Override
         public void hideUdfpsOverlay(int sensorId) {
+            if (mDisableNightMode) {
+                setNightMode(mNightModeActive, mAutoModeState);
+            }
             mFgExecutor.execute(() -> {
                 if (mKeyguardUpdateMonitor.isFingerprintDetectionRunning()) {
                     // if we get here, we expect keyguardUpdateMonitor's fingerprintRunningState
@@ -859,6 +871,7 @@ public class UdfpsController implements DozeReceiver, Dumpable {
         udfpsHapticsSimulator.setUdfpsController(this);
         udfpsShell.setUdfpsOverlayController(mUdfpsOverlayController);
         mUdfpsVendorCode = mContext.getResources().getInteger(com.android.systemui.res.R.integer.config_udfpsVendorCode);
+        mDisableNightMode = UdfpsUtils.hasUdfpsSupport(mContext);
 
         mAmbientDisplayConfiguration = new AmbientDisplayConfiguration(mContext);
         boolean screenOffFodSupported = mContext.getResources().getBoolean(
@@ -882,6 +895,23 @@ public class UdfpsController implements DozeReceiver, Dumpable {
         	}
     	    );
 	}
+    }
+
+    private void disableNightMode() {
+        ColorDisplayManager colorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
+        mAutoModeState = colorDisplayManager.getNightDisplayAutoMode();
+        mNightModeActive = colorDisplayManager.isNightDisplayActivated();
+        colorDisplayManager.setNightDisplayActivated(false);
+    }
+
+    private void setNightMode(boolean activated, int autoMode) {
+        ColorDisplayManager colorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
+        colorDisplayManager.setNightDisplayAutoMode(0);
+        if (autoMode == 0) {
+            colorDisplayManager.setNightDisplayActivated(activated);
+        } else if (autoMode == 1 || autoMode == 2) {
+            colorDisplayManager.setNightDisplayAutoMode(autoMode);
+        }
     }
 
     /**
