@@ -6471,6 +6471,12 @@ public final class Settings {
         public static final String SCREEN_OFF_ANIMATION = "screen_off_animation";
 
         /**
+         * Whether to show the ripple animation on fingerprint unlock
+         * @hide
+         */
+        public static final String AUTH_RIPPLE_ENABLED = "auth_ripple_enabled";
+
+        /**
          * Whether to show the battery info on the lockscreen while charging
          * @hide
          */
