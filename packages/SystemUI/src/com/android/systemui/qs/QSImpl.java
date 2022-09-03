@@ -527,8 +527,14 @@ public class QSImpl implements QS, CommandQueue.Callbacks, StatusBarStateControl
     }
 
     public void setBrightnessMirrorController(
-            @Nullable MirrorController brightnessMirrorController) {
-        mQSPanelController.setBrightnessMirror(brightnessMirrorController);
+        @Nullable MirrorController brightnessMirrorController) {   
+            mQSPanelController.setBrightnessMirror(brightnessMirrorController);
+            if (brightnessMirrorController instanceof BrightnessMirrorController) {
+                mQuickQSPanelController.setBrightnessMirror(
+                        (BrightnessMirrorController) brightnessMirrorController);
+            } else {
+                mQuickQSPanelController.setBrightnessMirror(null);
+            }
     }
 
     @Override
