@@ -675,7 +675,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
         return new StatusBarVisibilityModel(
                 showClock,
-                externalModel.getShowNotificationIcons(),
+                externalModel.getShowNotificationIcons() && !headsUpVisible,
                 showPrimaryOngoingActivityChip && !headsUpVisible,
                 showSecondaryOngoingActivityChip && !headsUpVisible,
                 externalModel.getShowSystemInfo());
@@ -691,6 +691,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         StatusBarVisibilityModel visibilityModel = mLastModifiedVisibility;
         boolean disableNotifications = !visibilityModel.getShowNotificationIcons();
         boolean hasOngoingActivity = visibilityModel.getShowPrimaryOngoingActivityChip();
+        boolean headsUpVisible = mStatusBarFragmentComponent.getHeadsUpAppearanceController().shouldBeVisible();
 
         // Hide notifications if the disable flag is set or we have an ongoing activity.
         if (disableNotifications || hasOngoingActivity) {
