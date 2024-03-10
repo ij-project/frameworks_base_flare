@@ -190,7 +190,7 @@ constructor(
 
     fun updateDimAmount(newDimAmount: Float) {
         coreLayoutParams.dimAmount = newDimAmount
-        windowManager.updateViewLayout(overlayView, coreLayoutParams)
+        windowManager.updateViewLayout(getTouchOverlay(), coreLayoutParams)
     }
 
     /** If the overlay is currently showing. */
