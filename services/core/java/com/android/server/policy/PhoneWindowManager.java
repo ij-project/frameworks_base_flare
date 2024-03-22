@@ -6879,9 +6879,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         String action = intent.getAction();
         if (action != null) {
             if (FlareUtils.INTENT_SCREENSHOT.equals(action)) {
-                interceptScreenshotChord(TAKE_SCREENSHOT_FULLSCREEN, SCREENSHOT_KEY_OTHER, 0);
-            } else if (FlareUtils.INTENT_REGION_SCREENSHOT.equals(action)) {
-                interceptScreenshotChord(TAKE_SCREENSHOT_SELECTED_REGION, SCREENSHOT_KEY_OTHER, 0);
+                interceptScreenshotChord(SCREENSHOT_KEY_OTHER, 0);
             }
         }
     }
