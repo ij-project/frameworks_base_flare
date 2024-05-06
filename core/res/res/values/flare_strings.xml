@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2024 Project Flare
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+
+    <!-- Settings Restart -->
+    <string name="settings_restart_title">Settings restart required</string>
+    <string name="settings_restart_message">For all changes to take effect, a Settings restart is required. Incase assests were not updated, you may need to manually Restart the Settings app, Soft Restart Settings now?</string>
+</resources>
