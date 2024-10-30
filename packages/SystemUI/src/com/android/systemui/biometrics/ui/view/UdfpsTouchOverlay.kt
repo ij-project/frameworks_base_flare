@@ -40,6 +40,7 @@ class UdfpsTouchOverlay(context: Context, attrs: AttributeSet?) : FrameLayout(co
     var isDisplayConfigured: Boolean = false
         private set
     override fun onFinishInflate() {
+        super.onFinishInflate()
         ghbmView = findViewById(R.id.hbm_view)
     }
     fun setUdfpsDisplayModeProvider(udfpsDisplayModeProvider: UdfpsDisplayModeProvider?) {
