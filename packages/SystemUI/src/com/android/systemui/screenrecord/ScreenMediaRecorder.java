@@ -97,6 +97,7 @@ public class ScreenMediaRecorder extends MediaProjection.Callback {
     private final MediaProjectionCaptureTarget mCaptureRegion;
     private final Handler mHandler;
     private String mAvcProfileLevel;
+    private int mMaxRefreshRate;
 
     private boolean mLowQuality;
     private boolean mLongerDuration;
@@ -117,6 +118,8 @@ public class ScreenMediaRecorder extends MediaProjection.Callback {
         mAudioSource = audioSource;
         mAvcProfileLevel = mContext.getResources().getString(
                 com.android.systemui.res.R.string.config_screenRecorderAVCProfileLevel);
+        mMaxRefreshRate = mContext.getResources().getInteger(
+                com.android.systemui.res.R.integer.config_screenRecorderMaxFramerate);
     }
 
     public void setLowQuality(boolean low) {
@@ -169,6 +172,7 @@ public class ScreenMediaRecorder extends MediaProjection.Callback {
         wm.getDefaultDisplay().getRealMetrics(metrics);
         int refreshRate = mLowQuality ? LOW_VIDEO_FRAME_RATE :
                 (int) wm.getDefaultDisplay().getRefreshRate();
+        if (mMaxRefreshRate != 0 && refreshRate > mMaxRefreshRate) refreshRate = mMaxRefreshRate;
         int[] dimens = getSupportedSize(metrics.widthPixels, metrics.heightPixels, refreshRate);
         int width = dimens[0];
         int height = dimens[1];
