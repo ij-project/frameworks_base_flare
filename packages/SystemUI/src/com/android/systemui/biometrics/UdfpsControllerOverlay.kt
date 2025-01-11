@@ -71,7 +71,6 @@ import com.android.systemui.statusbar.phone.UnlockedScreenOffAnimationController
 import com.android.systemui.statusbar.policy.ConfigurationController
 import com.android.systemui.statusbar.policy.KeyguardStateController
 import com.android.systemui.user.domain.interactor.SelectedUserInteractor
-import com.android.systemui.util.settings.SecureSettings
 import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -108,7 +107,6 @@ constructor(
     private val keyguardStateController: KeyguardStateController,
     private val unlockedScreenOffAnimationController: UnlockedScreenOffAnimationController,
     private var udfpsDisplayModeProvider: UdfpsDisplayModeProvider,
-    private val secureSettings: SecureSettings,
     val requestId: Long,
     @RequestReason val requestReason: Int,
     private val controllerCallback: IUdfpsOverlayControllerCallback,
@@ -159,8 +157,6 @@ constructor(
 
     private var overlayTouchListener: TouchExplorationStateChangeListener? = null
 
-    private val frameworkDimming = context.getResources().getBoolean(
-        R.bool.config_udfpsFrameworkDimming)
     private val coreLayoutParams =
         WindowManager.LayoutParams(
                 WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY,
@@ -176,22 +172,13 @@ constructor(
                 flags =
                     (Utils.FINGERPRINT_OVERLAY_LAYOUT_PARAM_FLAGS or
                         WindowManager.LayoutParams.FLAG_SPLIT_TOUCH)
-                if (frameworkDimming) {
-	            flags = flags or WindowManager.LayoutParams.FLAG_DIM_BEHIND
-        	}
                 privateFlags =
                     WindowManager.LayoutParams.PRIVATE_FLAG_TRUSTED_OVERLAY or
                         WindowManager.LayoutParams.PRIVATE_FLAG_EXCLUDE_FROM_SCREEN_MAGNIFICATION
-                dimAmount = 0.0f
                 // Avoid announcing window title.
                 accessibilityTitle = " "
                 inputFeatures = WindowManager.LayoutParams.INPUT_FEATURE_SPY
             }
-
-    fun updateDimAmount(newDimAmount: Float) {
-        coreLayoutParams.dimAmount = newDimAmount
-        windowManager.updateViewLayout(getTouchOverlay(), coreLayoutParams)
-    }
 
     /** If the overlay is currently showing. */
     val isShowing: Boolean
